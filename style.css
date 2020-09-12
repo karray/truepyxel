@@ -1,0 +1,42 @@
+/* body .processing>*{
+    backdrop-filter: blur(4px);
+} */
+#msg {
+    display: none;
+}
+#msg.processing{
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, .6);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4vw;
+}
+.preview{
+    display: flex;
+    justify-content: space-around;
+}
+
+.settings input{
+    width: 60px;
+}
+
+.settings{
+    display: flex;
+}
+
+.settings .option, .settings .button{
+    margin-left: 10px;
+}
+
+.settings .button{
+    margin-top: auto;
+}

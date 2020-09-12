@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="style.css">
+  <script type="text/javascript">
+    // set the pyodide files URL (packages.json, pyodide.asm.data etc)
+    window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
+  </script>
+  <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+</head>
+
+<body>
+  <div id='msg' class='processing'>
+    Downloading packages. It can take a while...
+  </div>
+  <div class='preview'>
+    <div><input id='file' type='file' accept='.png'></div>
+    <div class='settings'>
+      <div class='option'>
+        <div>Window</div>
+        <input id='window-size' type='number' value='2' min='1'>
+      </div>
+      <div class='option'>
+        <div>Pixel size</div>
+        <input id='pixel-size' type='number' value='2' min='1'>
+      </div>
+      <div class='button'>
+        <button onclick='update()'>Update</button>
+      </div>
+    </div>
+  </div>
+  <div class="preview">
+    <img id='source'>
+    <img id='result'>
+  </div>
+  <script src='main.js'></script>
+</body>
+
+</html>
