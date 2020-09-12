@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript">
+        window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
+    </script>
+    <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+</head>
+
+<body style='padding-top: 30px'>
+    <div
+        style='font-weight: bold; position: fixed; top: 0; right: 0; color: rgb(180, 0, 0); font-size: 20px; background-color: #fff; padding: 5px'>
+        Status: <span id='msg'>Initializing...</span>
+    </div>
+    <strong>Full source can be found <a href='https://github.com/karray/truepyxel/blob/master/pyodide.html'>here</a></strong>
+    <h2>Example 1</h2>
+    <hr>
+    <p>You can execute any Python code. Just enter something in the box below and click the button.</p>
+    <input id='code' value='sum([1,2,3,4,5])'>
+    <button onclick='evaluatePython()'>Run</button>
+    <br>
+    <br>
+    <div>
+        Output:
+    </div>
+    <textarea id='output' style='width: 100%;' rows='6' disabled></textarea>
+    <br>
+    <br>
+    <h2>Example 2</h2>
+    <hr>
+    <p>This example demonstrates the interaction between html dom and python. We define a function plot which returns an
+        image as a base64 string. By running this code, pyodide will download all required packages and then execute the
+        code. This may take some time (see console for more info). Feel free to edit this code.</p>
+    <textarea id='python-script' style='width: 100%;' rows='16'>
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import io, base64
+
+def plot(mu, sigma):
+    global img
+    x = np.linspace(mu - 3*sigma, mu + 3*sigma, 100)
+    plt.plot(x, stats.norm.pdf(x, mu, sigma))
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    img = 'data:image/png;base64,' + base64.b64encode(buf.read()).decode('UTF-8')
+    buf.close()
+    
+    return img</textarea>
+    <button onclick='loadScript()'>Run script</button>
+    <br>
+    <br>
+    <p>Now you can plot a normal distribution. The image will be loaded into the img tag.</p>
+    mu:
+    <input id='mu' value='1' type="number">
+    <br>
+    <br>
+    sigma:
+    <input id='sigma' value='1' type="number">
+    <br>
+    <br>
+    <button onclick='plot()'>
+        Plot
+    </button>
+    <br>
+    <img id="fig" />
+
+    <script>
+        function setMsg(s) {
+            document.getElementById("msg").innerHTML = s
+        }
+
+        // init pyodide
+        languagePluginLoader.then(() => { setMsg('Ready') })
+
+        const output = document.getElementById("output")
+        const code = document.getElementById("code")
+        function addToOutput(s) {
+            output.innerHTML = `${output.value}>>>${code.value}\n${s}\n`
+        }
+
+        function evaluatePython() {
+            setMsg('Processing...')
+            setTimeout(() => {
+                pyodide.runPythonAsync(code.value)
+                    .then(output => addToOutput(output))
+                    .catch((err) => { addToOutput(err) })
+                    .finally(() => { setMsg('Ready') })
+            }, 0)
+        }
+
+        function loadScript() {
+            setMsg('Processing...')
+            setTimeout(() => {
+                pyodide.runPythonAsync(document.getElementById("python-script").value)
+                    .catch((err) => { alert(err) })
+                    .finally(() => { setMsg('Ready') })
+            }, 0)
+        }
+
+        function plot() {
+            let m = parseInt(document.getElementById("mu").value)
+            let s = parseInt(document.getElementById("sigma").value)
+
+            setMsg('Processing...')
+            setTimeout(() => {
+                try {
+                    document.getElementById("fig").src = pyodide.globals.plot(m, s)
+                } catch (err) { alert(err.message) }
+                setMsg('Ready')
+            }, 0)
+        }
+    </script>
+</body>
+
+</html>
