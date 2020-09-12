@@ -20,13 +20,39 @@
     align-items: center;
     font-size: 4vw;
 }
-.preview{
+.preview, .options{
     display: flex;
     justify-content: space-around;
 }
 
+@media screen and (max-width: 480px) {
+    .options{
+        flex-direction: column;
+    }
+    .preview{
+        flex-direction: column-reverse;
+    }
+
+    .options>div, .preview>div{
+        margin-bottom: 3vw;
+
+    }
+}
+
+.img{
+    width: 100%;
+}
+
+.img img{
+    max-width: 100%;
+}
+
 .settings input{
-    width: 60px;
+    width: 6vw;
+}
+
+.label{
+    font-size: 2vw;
 }
 
 .settings{

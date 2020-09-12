@@ -12,7 +12,7 @@ languagePluginLoader
     // .then(() => pyodide.loadPackage(['numpy', 'matplotlib']))
     // fetch python script 
     .then(() => fetch('pixelate.py'))
-    // get bodu as text
+    // extact the script from the body as text
     .then(response => response.text())
     // execute python script
     .then(pyscript => pyodide.runPythonAsync(pyscript))
@@ -20,8 +20,11 @@ languagePluginLoader
         msg.classList.remove("processing")
         msg.innerHTML = 'Processing image..'
     })
-
-
+    // if there was an error on any step, notify the user
+    .catch(() => {
+        msg.classList.remove("processing")
+        alert('Initialization error. Please update the page.')
+    })
 
 // handle image upload
 inputFile.onchange = () => {
@@ -55,10 +58,11 @@ let update = () => {
     setTimeout(() => {
         let w = parseInt(windowSize.value)
         let p = parseInt(pixelSize.value)
-        // execute python function
         try {
+            // execute python function
             result.src = pyodide.globals.pixelate_dense(w, p)
         } catch{ alert('Python error') }
+        
         msg.classList.remove("processing")
     }, 0)
 }
