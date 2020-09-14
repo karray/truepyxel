@@ -13,10 +13,13 @@
         style='font-weight: bold; position: fixed; top: 0; right: 0; color: rgb(180, 0, 0); font-size: 20px; background-color: #fff; padding: 5px'>
         Status: <span id='msg'>Initializing...</span>
     </div>
-    <strong>Full source can be found <a href='https://github.com/karray/truepyxel/blob/master/pyodide.html'>here</a></strong>
+    <strong>Full source can be found <a
+            href='https://github.com/karray/truepyxel/blob/master/pyodide.html'>here</a></strong>
     <h2>Example 1</h2>
     <hr>
-    <p>You can execute any Python code. Just enter something in the box below and click the button.</p>
+    <p>You can execute any Python code. Just enter something in the box below and click the button. You can also import
+        packages, but keep in mind that this will take some time to download them (see status in the top right corner)
+    </p>
     <input id='code' value='sum([1,2,3,4,5])'>
     <button onclick='evaluatePython()'>Run</button>
     <br>
