@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+    <script type="text/javascript">
+        // this variable should be changed if you load pyodide from different source
+        window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
+    </script>
+
+    <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+</head>
+
+<body>
+    Output:
+    </div>
+    <textarea id='output' style='width: 100%;' rows='10' disabled></textarea>
+    <textarea id='code' value=''  rows='2'></textarea>
+    <button id='run' onclick='evaluatePython()'>Run</button>
+    <p>You can execute any Python code. Just enter something in the box above and click the button (or Ctrl+Enter).</p>
+    <div><a href='https://github.com/karray/truepyxel/demo.html'>Source code</a></div>
+
+    <script>
+        const output = document.getElementById("output")
+        const code = document.getElementById("code")
+
+        code.addEventListener("keydown", function (event) {
+            if (event.ctrlKey && event.key === "Enter") {
+                evaluatePython()
+            }
+        })
+
+        function addToOutput(s) {
+            output.value += `>>>${code.value}\n${s}\n`
+            output.scrollTop = output.scrollHeight
+            code.value=''
+        }
+
+        output.value = 'Initializing...\n'
+        // init pyodide
+        languagePluginLoader.then(() => { output.value += 'Ready!\n' })
+
+        function evaluatePython() {
+            pyodide.runPythonAsync(code.value)
+                .then(output => addToOutput(output))
+                .catch((err) => { addToOutput(err) })
+        }
+    </script>
+</body>
+
+</html>
