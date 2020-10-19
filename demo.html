@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 
 <head>
+    <title>Pyodide demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body,
+        textarea,
+        button {
+            font-size: 2vw;
+        }
+
+
+        @media only screen and (max-width: 600px) {
+
+            body,
+            textarea,
+            button {
+                font-size: 2vh;
+            }
+
+            #field {
+                display: flex;
+            }
+
+            #field textarea {
+                flex: 1;
+            }
+        }
+    </style>
+
     <script type="text/javascript">
         // this variable should be changed if you load pyodide from different source
         window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
@@ -13,8 +42,10 @@
     Output:
     </div>
     <textarea id='output' style='width: 100%;' rows='10' disabled></textarea>
-    <textarea id='code' value=''  rows='2'></textarea>
-    <button id='run' onclick='evaluatePython()'>Run</button>
+    <div id='field'>
+        <textarea id='code' value='' rows='2'></textarea>
+        <button id='run' onclick='evaluatePython()'>Run</button>
+    </div>
     <p>You can execute any Python code. Just enter something in the box above and click the button (or Ctrl+Enter).</p>
     <div><a href='https://github.com/karray/truepyxel/demo.html'>Source code</a></div>
 
@@ -31,7 +62,7 @@
         function addToOutput(s) {
             output.value += `>>>${code.value}\n${s}\n`
             output.scrollTop = output.scrollHeight
-            code.value=''
+            code.value = ''
         }
 
         output.value = 'Initializing...\n'
