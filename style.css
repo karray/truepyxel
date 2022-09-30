@@ -16,10 +16,13 @@
     right: 0;
     z-index: 1000;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 4vw;
+}
+#output{
+    font-size: 2vw;
 }
 .preview, .options{
     display: flex;
