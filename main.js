@@ -43,9 +43,14 @@ async function main() {
                 const p = parseInt(pixelSize.value)
                 // execute python function
                 try {
-                    result.src = pyodide.globals.set_img(img, w, p)
+                    result.src = pyodide.globals.get('set_img')(img, w, p).toJS()
                     // msg.classList.remove("processing")
-                } catch { alert('Python error') }
+                } catch (e) {
+                    alert(e.message)
+                    console.log("Error", e.stack);
+                    console.log("Error", e.name);
+                    console.log("Error", e.message);
+                }
                 msg.classList.remove("processing")
             }, 0)
         }
@@ -61,7 +66,7 @@ const update = () => {
         const p = parseInt(pixelSize.value)
         try {
             // execute python function
-            result.src = pyodide.globals.pixelate_dense(w, p)
+            result.src = pyodide.globals.get('pixelate_dense')(w, p).toJS()
         } catch { alert('Python error') }
 
         msg.classList.remove("processing")
