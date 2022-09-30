@@ -7,62 +7,65 @@ let result = document.getElementById('result');
 let windowSize = document.getElementById('window-size');
 let pixelSize = document.getElementById('pixel-size');
 
-languagePluginLoader
-    // load required packages
-    // .then(() => pyodide.loadPackage(['numpy', 'matplotlib']))
-    // fetch python script 
-    .then(() => fetch('pixelate.py'))
-    // extact the script from the body as text
-    .then(response => response.text())
-    // execute python script
-    .then(pyscript => pyodide.runPythonAsync(pyscript))
-    .then(() => {
+async function main() {
+    try {
+        window.pyodide = await loadPyodide();
+
+        // fetch python script 
+        const sourcecode = await fetch('pixelate.py').then(response => response.text())
+        // load required packages
+        await pyodide.loadPackagesFromImports(sourcecode)
+        // execute python script
+        pyodide.runPython(sourcecode)
         msg.classList.remove("processing")
         msg.innerHTML = 'Processing image..'
-    })
+    }
     // if there was an error on any step, notify the user
-    .catch(() => {
+    catch {
         msg.classList.remove("processing")
         alert('Initialization error. Please update the page.')
-    })
-
-// handle image upload
-inputFile.onchange = () => {
-    let file = inputFile.files[0]
-    let reader = new FileReader();
-
-    reader.onloadend = () => {
-        msg.classList.add("processing")
-
-        source.src = reader.result
-        setTimeout(() => {
-            // python set_img function needs only base64 part
-            let img = reader.result.replace(/^data:.+;base64,/, '')
-
-            let w = parseInt(windowSize.value)
-            let p = parseInt(pixelSize.value)
-            // execute python function
-            try {
-                result.src = pyodide.globals.set_img(img, w, p)
-                // msg.classList.remove("processing")
-            } catch{ alert('Python error') }
-            msg.classList.remove("processing")
-        }, 0)
     }
 
-    reader.readAsDataURL(file);
+    // handle image upload
+    inputFile.onchange = () => {
+        const file = inputFile.files[0]
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            msg.classList.add("processing")
+
+            source.src = reader.result
+            setTimeout(() => {
+                // python set_img function needs only base64 part
+                const img = reader.result.replace(/^data:.+;base64,/, '')
+
+                const w = parseInt(windowSize.value)
+                const p = parseInt(pixelSize.value)
+                // execute python function
+                try {
+                    result.src = pyodide.globals.set_img(img, w, p)
+                    // msg.classList.remove("processing")
+                } catch { alert('Python error') }
+                msg.classList.remove("processing")
+            }, 0)
+        }
+
+        reader.readAsDataURL(file);
+    }
 }
 
-let update = () => {
+const update = () => {
     msg.classList.add("processing")
     setTimeout(() => {
-        let w = parseInt(windowSize.value)
-        let p = parseInt(pixelSize.value)
+        const w = parseInt(windowSize.value)
+        const p = parseInt(pixelSize.value)
         try {
             // execute python function
             result.src = pyodide.globals.pixelate_dense(w, p)
-        } catch{ alert('Python error') }
-        
+        } catch { alert('Python error') }
+
         msg.classList.remove("processing")
     }, 0)
 }
+
+main()
