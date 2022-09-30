@@ -25,6 +25,8 @@ async function main() {
         pyodide.runPython(sourcecode)
         status.classList.remove("processing")
         msg.innerHTML = 'Processing image..'
+        output.innerHTML=''
+
     }
     // if there was an error on any step, notify the user
     catch (e){
@@ -52,7 +54,7 @@ async function main() {
                 const p = parseInt(pixelSize.value)
                 // execute python function
                 try {
-                    result.src = pyodide.globals.get('set_img')(img, w, p).toJs()
+                    result.src = pyodide.globals.get('set_img')(img, w, p)
                     // status.classList.remove("processing")
                 } catch (e) {
                     alert(e.message)
@@ -75,7 +77,7 @@ function update() {
         const p = parseInt(pixelSize.value)
         try {
             // execute python function
-            result.src = pyodide.globals.get('pixelate_dense')(w, p).toJs()
+            result.src = pyodide.globals.get('pixelate_dense')(w, p)
         } catch { alert('Python error') }
 
         msg.classList.remove("processing")
