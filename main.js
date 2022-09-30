@@ -16,13 +16,13 @@ function updateStatus(msg){
 
 async function main() {
     try {
-        window.pyodide = loadPyodide({ stdout: updateStatus, stderr: updateStatus })
+        window.pyodide = await loadPyodide({ stdout: updateStatus, stderr: updateStatus })
         // fetch python script 
         const sourcecode = await fetch('pixelate.py').then(response => response.text())
         // load required packages
-        await window.pyodide.loadPackagesFromImports(sourcecode)
+        await pyodide.loadPackagesFromImports(sourcecode)
         // execute python script
-        window.pyodide.runPython(sourcecode)
+        pyodide.runPython(sourcecode)
         status.classList.remove("processing")
         msg.innerHTML = 'Processing image..'
     }
@@ -52,7 +52,7 @@ async function main() {
                 const p = parseInt(pixelSize.value)
                 // execute python function
                 try {
-                    result.src = window.pyodide.globals.get('set_img')(img, w, p).toJs()
+                    result.src = pyodide.globals.get('set_img')(img, w, p).toJs()
                     // status.classList.remove("processing")
                 } catch (e) {
                     alert(e.message)
@@ -75,7 +75,7 @@ function update() {
         const p = parseInt(pixelSize.value)
         try {
             // execute python function
-            result.src = window.pyodide.globals.get('pixelate_dense')(w, p).toJs()
+            result.src = pyodide.globals.get('pixelate_dense')(w, p).toJs()
         } catch { alert('Python error') }
 
         msg.classList.remove("processing")
