@@ -20,7 +20,7 @@ async function main() {
         // fetch python script 
         const sourcecode = await fetch('pixelate.py').then(response => response.text())
         // load required packages
-        await pyodide.loadPackagesFromImports(sourcecode)
+        await pyodide.loadPackagesFromImports(sourcecode, updateStatus, updateStatus)
         // execute python script
         pyodide.runPython(sourcecode)
         status.classList.remove("processing")
