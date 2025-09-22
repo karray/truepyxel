@@ -6,10 +6,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="text/javascript">
-        window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
+    <script type="text/javascript">
     </script>
-    <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
 </head>
 
 <body style="padding-top: 4vw;">
@@ -79,8 +78,12 @@ def plot(mu, sigma):
             document.getElementById("msg").innerHTML = s
         }
 
-        // init pyodide
-        languagePluginLoader.then(() => { setMsg('Ready') })
+        let pyodide;
+
+        (async () => {
+            pyodide = await loadPyodide()
+            setMsg('Ready')
+        })() // call the function immediately
 
         const output = document.getElementById("output")
         const code = document.getElementById("code")
@@ -88,36 +91,45 @@ def plot(mu, sigma):
             output.innerHTML = `${output.value}>>>${code.value}\n${s}\n`
         }
 
-        function evaluatePython() {
+        async function evaluatePython() {
             setMsg('Processing...')
-            setTimeout(() => {
-                pyodide.runPythonAsync(code.value)
-                    .then(output => addToOutput(output))
-                    .catch((err) => { addToOutput(err) })
-                    .finally(() => { setMsg('Ready') })
-            }, 0)
-        }
-
-        function loadScript() {
-            setMsg('Processing...')
-            setTimeout(() => {
-                pyodide.runPythonAsync(document.getElementById("python-script").value)
-                    .catch((err) => { alert(err) })
-                    .finally(() => { setMsg('Ready') })
-            }, 0)
-        }
-
-        function plot() {
-            let m = parseInt(document.getElementById("mu").value)
-            let s = parseInt(document.getElementById("sigma").value)
-
-            setMsg('Processing...')
-            setTimeout(() => {
-                try {
-                    document.getElementById("fig").src = pyodide.globals.plot(m, s)
-                } catch (err) { alert(err.message) }
+            try {
+                await pyodide.loadPackagesFromImports(code.value, addToOutput, addToOutput)
+                const result = await pyodide.runPythonAsync(code.value)
+                addToOutput(result)
+            } catch (err) {
+                addToOutput(err)
+            } finally {
                 setMsg('Ready')
-            }, 0)
+            }
+        }
+
+        async function loadScript() {
+            setMsg('Processing...')
+            try {
+                const code = document.getElementById("python-script").value
+                await pyodide.loadPackagesFromImports(code)
+                await pyodide.runPythonAsync(code)
+            } catch (err) {
+                alert(err)
+            } finally {
+                setMsg('Ready')
+            }
+        }
+
+        async function plot() {
+            const m = parseInt(document.getElementById("mu").value)
+            const s = parseInt(document.getElementById("sigma").value)
+
+            setMsg('Processing...')
+            try {
+            const img = await pyodide.runPythonAsync(`plot(${m}, ${s})`)
+            document.getElementById("fig").src = img
+            } catch (err) {
+            alert(err.message || err)
+            } finally {
+            setMsg('Ready')
+            }
         }
     </script>
 </body>
